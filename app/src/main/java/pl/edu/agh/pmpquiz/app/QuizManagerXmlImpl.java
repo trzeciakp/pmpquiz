@@ -2,14 +2,17 @@ package pl.edu.agh.pmpquiz.app;
 
 import android.content.Context;
 import android.util.Log;
+
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
-import pl.edu.agh.pmpquiz.model.Question;
-import pl.edu.agh.pmpquiz.model.Quiz;
 
 import java.io.InputStream;
+
+import pl.edu.agh.pmpquiz.model.Question;
+import pl.edu.agh.pmpquiz.model.Quiz;
 
 /**
  *
@@ -55,5 +58,10 @@ public class QuizManagerXmlImpl implements QuizManager {
         int size = quiz.getQuestions().size();
         current = i % size;
         return quiz.getQuestions().get(current);
+    }
+
+    @Override
+    public Quiz getQuiz() {
+        return quiz;
     }
 }

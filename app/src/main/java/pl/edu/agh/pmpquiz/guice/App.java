@@ -1,6 +1,7 @@
 package pl.edu.agh.pmpquiz.guice;
 
 import android.app.Application;
+
 import roboguice.RoboGuice;
 
 /**

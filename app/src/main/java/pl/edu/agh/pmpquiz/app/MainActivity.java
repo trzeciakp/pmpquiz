@@ -5,20 +5,26 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListPopupWindow;
 import android.widget.TextView;
+
 import com.google.inject.Inject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import pl.edu.agh.pmpquiz.adapter.FilteredQuestionsListAdapter;
 import pl.edu.agh.pmpquiz.model.Question;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectResource;
 import roboguice.inject.InjectView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends RoboActivity {
@@ -53,10 +59,14 @@ public class MainActivity extends RoboActivity {
 
     private static final String CURRENT_KEY = "CURRENT_QUESTION";
 
+    private ListPopupWindow filterdQuestions;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setListeners();
+        filterdQuestions = new ListPopupWindow(this);
         buttons = new ArrayList<Button>();
         buttons.add(answerA);
         buttons.add(answerB);
@@ -65,6 +75,50 @@ public class MainActivity extends RoboActivity {
         int current = sharedPreferences.getInt(CURRENT_KEY, Integer.MIN_VALUE);
         Question nextQuestion = (current == Integer.MIN_VALUE ? quizManager.getNextQuestion() : quizManager.getQuestion(current));
         changeQuestion(nextQuestion);
+    }
+
+    public void filterQuiz(){
+        String searchQuery = ((EditText) findViewById(R.id.filter)).getText().toString();
+        ArrayList<Question> filteredQuestions = new ArrayList<Question>();
+
+        for(Question q : quizManager.getQuiz().getQuestions()){
+            if(q.getText().contains(searchQuery)){
+                filteredQuestions.add(q);
+            }
+        }
+
+        if(filteredQuestions.size() > 0) {
+            showFilteredQuestionsInPopup(filteredQuestions);
+        }
+        else{
+            new AlertDialog.Builder(this)
+                    .setMessage("No question")
+                    .setCancelable(true)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+
+    }
+
+    public void showFilteredQuestionsInPopup(ArrayList<Question> questions){
+        filterdQuestions.setAdapter(new FilteredQuestionsListAdapter(this, questions));
+        filterdQuestions.setAnchorView(findViewById(R.id.scrollView));
+        filterdQuestions.setWidth(300);
+        filterdQuestions.setHeight(400);
+        filterdQuestions.setModal(true);
+        filterdQuestions.show();
+    }
+
+    public void setListeners(){
+        ((EditText) findViewById(R.id.filter)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    //dont have time to do it the right way :p
+                    filterQuiz();
+                }
+                return false;
+            }
+        });
     }
 
     @Override

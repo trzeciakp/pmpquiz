@@ -3,3 +3,4 @@
 /.idea/workspace.xml
 .DS_Store
 .idea/
+app/src/main/res/raw/quiz_raw_all.xml

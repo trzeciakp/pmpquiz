@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">PMP Quiz</string>
+    <string name="action_explanation">Explanation</string>
+    <string name="nextQuestion">Next</string>
+    <string name="previousQuestion">Previous</string>
+    <string name="action_goto">Go to...</string>
+    <string name="goTo">Go to...</string>
+
+</resources>
